@@ -1,0 +1,69 @@
+---
+title: "Brazilian Population"
+subtitle: "by Expedito Pinto de Paula Junior"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    social: menu
+    source_code: embed
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+# Load DataSet
+bpop <- read.csv("BrazilPopulation.csv", header = TRUE, sep = ";", dec = ",")
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Mapping using "leaflet"
+
+```{r}
+library(leaflet)
+
+df <- data.frame(name = bpop$StateName,
+                 pop = bpop$Population,
+                 lat = bpop$Lat,
+                 lng = bpop$Lon)
+
+
+df %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(weight = 2, radius = sqrt(bpop$Population) * 50, popup = 
+      paste("<b>State: </b><a href='", bpop$StateLink,"'>",bpop$StateName," - ", bpop$State, "</a><br>",
+            "<b>Population: </b>",bpop$Population, "<br>",
+            "<b>Equivalent Country: </b><a href='",bpop$CountryLink,"'>",bpop$Equivalent_Country,"</a>"), group="int")
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+### Total and Ranking
+
+#### Total Population: **`r sum(bpop$Population)`**
+
+```{r}
+knitr::kable(bpop[c("Rank","StateName","Population")])
+```
+
+### General Info
+
+#### **DataSet**
+
+- Dataset it was created based in Wikipedia [Brazilian Population by State](https://pt.wikipedia.org/wiki/Lista_de_unidades_federativas_do_Brasil_por_popula%C3%A7%C3%A3o).  
+
+- This board was created using **flashdashboard** and **leaflet** library.
+
+- Click in circles to see more details.
+
+#### **Author**
+- Designed by:  **Expedito Pinto de Paula Junior**
+- Course: **Developing Data Products**
+- Date: **Nov, 16 2020**
+
+
+
+
